@@ -30,7 +30,8 @@ public class Utilisateur {
     private int idrole;
     private Role role;
 
-    private Utilisateur(int id, String login, String password, String description, int idrole) {
+
+    private Utilisateur(int id, String login, String password, String description, int idrole ) {
         this.id = id;
         this.login = login;
         this.password = password;
@@ -38,6 +39,7 @@ public class Utilisateur {
         this.idrole = idrole;
        
     }
+ 
     
     public Utilisateur(String login, String password, String description, int idrole) {
         this(-1,login,password,description,idrole);
@@ -95,7 +97,7 @@ public class Utilisateur {
     
     public static List<Utilisateur> tousLesUtilisateurs(ConnectionSGBD connSGBD) throws SQLException{
         List<Utilisateur> alls = new ArrayList<>();
-        try (PreparedStatement st = connSGBD.getCon().prepareStatement(" select id,login,password,description,idrole from utilisateur")){
+        try (PreparedStatement st = connSGBD.getCon().prepareStatement(" select id,login,password,description,idrole,machineautorisee from utilisateur")){
          ResultSet res = st.executeQuery();
          while(res.next()){
              int id = res.getInt("id");
@@ -124,7 +126,7 @@ public class Utilisateur {
      */
     
     public List<Utilisateur> amis(ConnectionSGBD connSGBD) throws SQLException{
-        return cherche(connSGBD,"select id,login,password,description,idrole from apprecie as a1 join apprecie as a2 on a1.u2=a2.u1 join utilisateur on utilisateur.id = a1.u2 where a1.u1= ? and a1.u1 = a2.u2" );
+        return cherche(connSGBD,"select id,login,password,description,idrole,machineautorisee from apprecie as a1 join apprecie as a2 on a1.u2=a2.u1 join utilisateur on utilisateur.id = a1.u2 where a1.u1= ? and a1.u1 = a2.u2" );
     }
     
     private List<Utilisateur> cherche(ConnectionSGBD connSGBD, String requeteSQL) throws SQLException{
@@ -162,31 +164,92 @@ public class Utilisateur {
     // renvoi des exceptions
             
             
-    public static void menuUtilisateur(ConnectionSGBD connSGBD){
+    public void menuUtilisateurConnecte(ConnectionSGBD connSGBD) throws SQLException{
         int rep=-1;
         while (rep!=0){
             int i=1;
-            System.out.println("Menu Utilisateur");
-            System.out.println("===============");
-            System.out.println((i++)+")lister tous les utilisateurs");
-            System.out.println((i++)+")créer un nouvel utilisateur");
-            System.out.println((i++)+")créer des utilisateurs test");
-            System.out.println((i++)+")supprimer un utilisateur");
-            System.out.println((i++)+")login");
+            System.out.println("Utilisateur"+ this.login);
+            System.out.println("=====================");
+            System.out.println((i++)+")voir tous les produits");
+            System.out.println((i++)+")voir toutes les machines");
+            System.out.println((i++)+")voir toutes les opérations");
             System.out.println("0) Fin");
             rep= ConsoleFdB.entreeEntier("Votre choix :");
             try{
                 int j=1;
                 if (rep==j++){
-                    System.out.println(ListUtils.enumerateList(Utilisateur.tousLesUtilisateurs(connSGBD)));
+                    System.out.println(ListUtils.enumerateList(produit.tousLesProduits(connSGBD)));
                 }else if (rep== j++){
-                    Utilisateur nouveau = Utilisateur.demande(connSGBD);
+                    System.out.println(ListUtils.enumerateList(Machine.toutesLesMachines(connSGBD)));
+                }else if (rep==j++){
+                    System.out.println(ListUtils.enumerateList(typeop.tousLesTypeop(connSGBD)));
+  
+            }
+                
+            }catch (SQLException ex){
+                System.out.println(ExceptionsUtils.messageEtPremiersAppelsDansPackage(ex,"fr.insa.rochette",10));
+            } 
+        }
+    }
+
+
+    public void menuAdminConnecte(ConnectionSGBD connSGBD) throws SQLException{
+        int rep=-1;
+        while (rep!=0){
+            int i=1;
+            System.out.println("Admin"+ this.login);
+            System.out.println("=====================");
+            System.out.println((i++)+")voir tous les produits");
+            System.out.println((i++)+")voir toutes les machines");
+            System.out.println((i++)+")voir tous les types opérations");
+            System.out.println((i++)+")ajouter une machine");
+            System.out.println((i++)+")ajouter un produit");
+            System.out.println((i++)+")ajouter un produit brut");
+            System.out.println((i++)+")ajouter un type d'opération");
+            System.out.println((i++)+")ajouter une opération");
+            System.out.println((i++)+")ajouter le temps de réalisation d'une opération");
+            System.out.println((i++)+")lister tous les utilisateurs");
+            System.out.println((i++)+")supprimer un utilisateur");
+            System.out.println((i++)+")créer des utilisateurs test");
+            System.out.println((i++)+")créer un nouvel utilisateur");
+            System.out.println((i++)+")Définir des machines autorisées");
+            System.out.println("0) Fin");
+            rep= ConsoleFdB.entreeEntier("Votre choix :");
+            try{
+                int j=1;
+                if (rep==j++){
+                    System.out.println(ListUtils.enumerateList(produit.tousLesProduits(connSGBD)));
+                }else if (rep== j++){
+                    System.out.println(ListUtils.enumerateList(Machine.toutesLesMachines(connSGBD)));
+                }else if (rep==j++){
+                     System.out.println(ListUtils.enumerateList(typeop.tousLesTypeop(connSGBD)));
+                
+                }else if (rep==j++){
+                    Machine nouveau = Machine.demande(connSGBD);
                     nouveau.sauvegarde(connSGBD);
-                    System.out.println("utilisateur N°"+ nouveau.getId()+"crée");
-                }else if (rep== j++){
-                    String noms = ConsoleFdB.entreeString("nom de base");
-                    int nbr = ConsoleFdB.entreeInt("nombre d'utilisateur à créer");
-                    Utilisateur.creeUtilisateursTest(connSGBD, noms, nbr);
+                    System.out.println("machine N°"+ nouveau.getId()+"crée");
+                }else if (rep==j++){
+                    produit nouveau = produit.demande(connSGBD);
+                    nouveau.sauvegarde(connSGBD);
+                    System.out.println("produit N°"+ nouveau.getId()+"crée");
+                }else if (rep==j++){
+                    ProduitBrut nouveau = ProduitBrut.demande(connSGBD);
+                    nouveau.sauvegarde(connSGBD);
+                    System.out.println("produit brut N°"+ nouveau.getId()+"crée");
+                }else if (rep==j++){
+                    typeop nouveau = typeop.demande(connSGBD);
+                    nouveau.sauvegarde(connSGBD);
+                    System.out.println("type d'opération N°"+ nouveau.getId()+"crée");
+                }else if (rep==j++){
+                    operation nouveau = operation.demande(connSGBD);
+                    nouveau.sauvegarde(connSGBD);
+                    System.out.println("opération N°"+ nouveau.getId()+"crée");
+                }else if (rep==j++){
+                    realise nouveau = realise.demande(connSGBD);
+                    nouveau.sauvegarde(connSGBD);
+                    System.out.println("realise N°"+ nouveau.getId()+"crée");
+                }else if (rep==j++){
+                    System.out.println(ListUtils.enumerateList(Utilisateur.tousLesUtilisateurs(connSGBD)));
                 }else if (rep== j++){
                     Optional<Utilisateur> choix= ListUtils.selectOneOrCancel("--- selectionnez un utiliasteur à supprimer",
                             Utilisateur.tousLesUtilisateurs(connSGBD), Utilisateur::toString);
@@ -194,95 +257,49 @@ public class Utilisateur {
                         choix.get().delete(connSGBD);
                     }
                 }else if (rep== j++){
-                    String login= ConsoleFdB.entreeString("login:");
-                    String pass = ConsoleFdB.entreeString("pass:");
-                    Optional<Utilisateur> user = Utilisateur.login(connSGBD, login, pass);
-                    if (user.isPresent()){
-                        System.out.println("user" + user.get()+ "connected"); 
-                        user.get().menuUtilisateurConnecte(connSGBD);
-                    }else{
-                        System.out.println("login ou pass incorrects");
-                    }
-                }
-            }catch (SQLException ex){
-                System.out.println(ExceptionsUtils.messageEtPremiersAppelsDansPackage(ex,"fr.insa.rochette",5));
-            }
-        }
-    }
-
-    public void menuUtilisateurConnecte(ConnectionSGBD connSGBD) throws SQLException{
-        int rep=-1;
-        while (rep!=0){
-            int i=1;
-            System.out.println("Utilisateur"+ this.login);
-            System.out.println("=====================");
-            System.out.println((i++)+")afficher les utilisateurs appréciés");
-            System.out.println((i++)+")définir les utilisateurs appréciés");
-            System.out.println((i++)+")afficher les utilisateurs qui m'apprécient");
-            System.out.println((i++)+")afficher mes amis");
-            System.out.println("0) Fin");
-            rep= ConsoleFdB.entreeEntier("Votre choix :");
-            try{
-                int j=1;
-                if (rep==j++){
-                    List<Utilisateur> apprecies = this.apprecie(connSGBD);
-                    System.out.println("--- utilisateurs appréciés");
-                    
-                    if (apprecies.isEmpty()){
-                        System.out.println("Aucun");
-                    }else{
-                        System.out.println(ListUtils.enumerateList(apprecies));                        
-                    }
+                    String noms = ConsoleFdB.entreeString("nom de base");
+                    int nbr = ConsoleFdB.entreeInt("nombre d'utilisateur à créer");
+                    Utilisateur.creeUtilisateursTest(connSGBD, noms, nbr);
                 }else if (rep== j++){
-                    List<Utilisateur> cur = this.apprecie(connSGBD);
-                    List<Utilisateur> tous = Utilisateur.tousLesUtilisateurs(connSGBD);
+                    Utilisateur nouveau = Utilisateur.demande(connSGBD);
+                    nouveau.sauvegarde(connSGBD);
+                    System.out.println("utilisateur N°"+ nouveau.getId()+"crée");
+                }else if (rep== j++){
+                    List<Machine> cur = this.autorisee(connSGBD);
+                    List<Machine> tous = Machine.toutesLesMachines(connSGBD);
                     tous.removeAll(cur);
-                    List<Utilisateur> apprecies = ListUtils.selectMultiple(
-                            "------ choisissez les utilisateurs que vous appreciez", this.apprecie(connSGBD), 
+                    Utilisateur user =ListUtils.selectOne("--- selectionnez un utilisateur",Utilisateur.tousLesUtilisateurs(connSGBD), Utilisateur::toString);
+                    List<Machine> autoriser = ListUtils.selectMultiple(
+                            "------ choisissez les machines autorisées", this.autorisee(connSGBD), 
                             tous,
-                            Utilisateur:: toString);
-                    this.saveApprecies(connSGBD, apprecies);
-                }else if (rep==j++){
-                        List<Utilisateur> appreciePar = this.appreciePar(connSGBD);
-                    System.out.println("--- utilisateurs qui m'apprécient");
-                    
-                    if (appreciePar.isEmpty()){
-                        System.out.println("Aucun");
-                    }else{
-                        System.out.println(ListUtils.enumerateList(appreciePar));
-                    }
-                }else if (rep==j++){
-                        List<Utilisateur> amis = this.amis(connSGBD);
-                    System.out.println("--- mes amis");
-                    
-                    if (amis.isEmpty()){
-                        System.out.println("Aucun");
-                    }else{
-                        System.out.println(ListUtils.enumerateList(amis));                        
-                    }
-            }
+                            Machine:: toString);
+                    this.saveAutorisee(connSGBD,user,autoriser);
+                }
                 
             }catch (SQLException ex){
-                System.out.println(ExceptionsUtils.messageEtPremiersAppelsDansPackage(ex,"fr.insa.rochette",5));
+                System.out.println(ExceptionsUtils.messageEtPremiersAppelsDansPackage(ex,"fr.insa.rochette",20));
             } 
         }
     }
+
+ 
+
     
-    public void saveApprecies(ConnectionSGBD connSGBD, List<Utilisateur> apprecies) throws SQLException {
+    public void saveAutorisee(ConnectionSGBD connSGBD,Utilisateur user, List<Machine> autorise) throws SQLException {
         Connection conn=connSGBD.getCon();
         conn.setAutoCommit(false);
         try (Statement st= conn.createStatement()){
             //...
             try(PreparedStatement supp = conn.prepareStatement(
-            "delete from apprecie where u1 = ?")){
-                supp.setInt(1, this.id);// on supprime tous les anciennes relations pour l'utilisateur courant
+            "delete from autorisee where idutilisateur = ?")){
+                supp.setInt(1, user.getId());// on supprime tous les anciennes machine
                 supp.executeUpdate();
             }
             try(PreparedStatement ajout = conn.prepareStatement(
-            "insert into apprecie (u1,u2) values (?,?)")){
-                for (Utilisateur u2 : apprecies){
-                    ajout.setInt(1,this.id);
-                    ajout.setInt(2, u2.id);
+            "insert into autorisee (idutilisateur,machine) values (?,?)")){
+                for (Machine machine : autorise){
+                    ajout.setInt(1,user.getId());
+                    ajout.setInt(2, machine.id);
                     ajout.executeUpdate();
                 }
             }
@@ -295,7 +312,7 @@ public class Utilisateur {
         finally{
             conn.setAutoCommit(true);
         }
-    }
+    } 
 
     @Override
     public int hashCode() {
@@ -376,6 +393,7 @@ public class Utilisateur {
         this.idrole = idrole;
     }
     
+  
+}  
     
-    
-}
+
