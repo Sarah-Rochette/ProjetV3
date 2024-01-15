@@ -74,4 +74,34 @@ public class realise {
      } 
     return alls;
     }
+
+    @Override
+    public String toString() {
+        return "realise{" + "id=" + id + ", idtype=" + idtype + ", duree=" + duree + '}';
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getIdtype() {
+        return idtype;
+    }
+
+    public void setIdtype(int idtype) {
+        this.idtype = idtype;
+    }
+
+    public int getDuree() {
+        return duree;
+    }
+
+    public void setDuree(int duree) {
+        this.duree = duree;
+    }
+    
 }

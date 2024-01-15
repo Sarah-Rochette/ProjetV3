@@ -6,9 +6,11 @@ package fr.insa.rochette.cours.m3.projets.likes.model;
 
 import fr.insa.rochette.utils.ConsoleFdB;
 import fr.insa.rochette.utils.database.ConnectionSGBD;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,7 +89,32 @@ public class Machine {
      } 
     return alls;
     }
+   
+    public List<Machine> cherche(ConnectionSGBD connSGBD, String requeteSQL) throws SQLException{
+        List<Machine> alls = new ArrayList<>();
+        try (PreparedStatement st = connSGBD.getCon().prepareStatement(
+                requeteSQL)){
+         st.setInt(1,this.id);
+         ResultSet res = st.executeQuery();
+         while(res.next()){
+             int id = res.getInt("id");
+             String nom=res.getString("nom");
+             String description= res.getString("description");
+             int puissance = res.getInt("puissance");
+             int couthoraire = res.getInt("couthoraire");
+             String operation= res.getString("operation");
+             alls.add(new Machine(id,nom,description,puissance,couthoraire,operation));
+         }
+     } 
+     return alls;
+    }
+     
     
+    public List<Machine> autorisee(ConnectionSGBD connSGBD) throws SQLException{
+        return cherche(connSGBD,"select id,nom,description,puissance,couthoraire,operation from machine join autorisee on autorisee.idmachine=machine.id where autorisee.idutilisateur = ?" );
+    }
+ 
+
     @Override
     public String toString() {
         return "Machine{" + "id=" + id + ", nom=" + nom + ", description=" + description + ", puissance=" + puissance + ", couthoraire=" + couthoraire + ", operation=" + operation + '}';

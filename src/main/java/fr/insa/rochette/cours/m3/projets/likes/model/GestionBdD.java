@@ -33,7 +33,7 @@ public class GestionBdD {
 //    return con;
 //    }
 
-    
+    private static Utilisateur utilisateurConnecte;
     public static ConnectionSGBD defautCon() throws SQLException{
         return ConnectionSGBD.connect(ConnectionSGBD.SGBDConnus.MARIADB,
                 "92.222.25.165",3306,"m3_srochette01","m3_srochette01","9d235468");
@@ -93,6 +93,7 @@ public class GestionBdD {
                    +connSGBD.getSgbd().sqlForGeneratedIntPKColumn("id")+",\n"
                    +"idtype integer,\n"
                    +"idproduit integer\n"
+                   +"produitbrut text\n"
                    +")");
             st.executeUpdate("alter table operation \n"
                    +" add constraint fk_operation_idtype \n"
@@ -100,6 +101,25 @@ public class GestionBdD {
             st.executeUpdate("alter table operation \n"
                    +" add constraint fk_operation_idproduit \n"
                    +"foreign key (idproduit) references produit(id)");
+            st.executeUpdate("alter table operation \n"
+                   +" add constraint fk_operation_produitbrut \n"
+                   +"foreign key (produitbrut) references produitbrut(description)");
+            st.executeUpdate("create table produitbrut (\n"
+                   +connSGBD.getSgbd().sqlForGeneratedIntPKColumn("id")+",\n"
+                   +"descri^tion text,\n"
+                   +"nombre integer\n"
+                   +")");
+            st.executeUpdate("create table autorisee (\n"
+                   +connSGBD.getSgbd().sqlForGeneratedIntPKColumn("id")+",\n"
+                   +"idutilisateur integer,\n"
+                   +"idmachine integer\n"
+                   +")");
+            st.executeUpdate("alter table autorisee \n"
+                   +" add constraint fk_autorisee_idutilisateur \n"
+                   +"foreign key (idutilisateur) references utilisateur(id)");
+            st.executeUpdate("alter table autorisee \n"
+                   +" add constraint fk_autorisee_idmachine \n"
+                   +"foreign key (idmachine) references machine(id)");
            conn.commit();
         }
         catch(SQLException ex){
@@ -130,6 +150,31 @@ public class GestionBdD {
     public static void supprimeSchema(ConnectionSGBD connSGBD) throws SQLException{
         Connection conn=connSGBD.getCon();
         try (Statement st= conn.createStatement()){
+            try{
+            st.executeUpdate("alter table autorisee drop constraint fk_autorisee_idmachine");   
+           }
+           catch(SQLException ex){
+           }
+            try{
+            st.executeUpdate("alter table autorisee drop constraint fk_autorisee_idutilisateur");   
+           }
+           catch(SQLException ex){
+           }
+           try{
+            st.executeUpdate("drop table operation ");
+           }
+           catch(SQLException ex){
+           }
+            try{
+            st.executeUpdate("drop table produit brut ");
+           }
+           catch(SQLException ex){
+           }
+           try{
+            st.executeUpdate("alter table operation drop constraint fk_operation_produitbrut");   
+           }
+           catch(SQLException ex){
+           }
             try{
             st.executeUpdate("alter table operation drop constraint fk_operation_idproduit");   
            }
@@ -195,20 +240,31 @@ public class GestionBdD {
             int i=1;
             System.out.println("Menu prinicipal");
             System.out.println("===============");
+            System.out.println((i++)+")login");
             System.out.println((i++)+")supprimer schéma");
             System.out.println((i++)+")créer schéma");
             System.out.println((i++)+") initialiser la BdD");
             System.out.println((i++)+") RAZ de la BdD = supprime + cree + init");
-            System.out.println((i++)+") Menu utilisateur");
-            System.out.println((i++)+") Ajouter une machine");
-            System.out.println((i++)+") Afficher les machines");
-            System.out.println((i++)+") Ajouter un type d'opération");
-            System.out.println((i++)+") Afficher les types d'opérations");
             System.out.println("0) Fin");
             rep= ConsoleFdB.entreeEntier("Votre choix :");
             try{
                 int j=1;
-                if (rep==j++){
+                if (rep== j++){
+                    String login= ConsoleFdB.entreeString("login:");
+                    String pass = ConsoleFdB.entreeString("pass:");
+                    Optional<Utilisateur> user = Utilisateur.login(connSGBD, login, pass);
+                    if (user.isPresent()){
+                        utilisateurConnecte=user.get();
+                        System.out.println("user" + utilisateurConnecte+ "connected");
+                           if (utilisateurConnecte.getIdrole()==2){
+                            utilisateurConnecte.menuUtilisateurConnecte(connSGBD);
+                           }else{
+                           utilisateurConnecte.menuAdminConnecte(connSGBD); 
+                           }
+                    }else{
+                        System.out.println("login ou pass incorrects");
+                    }
+                }else if (rep==j++){
                     supprimeSchema(connSGBD);
                 }else if (rep== j++){
                     creeSchema(connSGBD);
@@ -216,30 +272,13 @@ public class GestionBdD {
                     initialise(connSGBD);
                 }else if (rep== j++){
                     razBdD(connSGBD);
-                }else if (rep== j++){
-                    Utilisateur.menuUtilisateur(connSGBD);
-                }else if (rep==j++){
-                    Machine nouveau = Machine.demande(connSGBD);
-                    nouveau.sauvegarde(connSGBD);
-                    System.out.println("machine N°"+ nouveau.getId()+"crée");
-                }else if (rep==j++){
-                    System.out.println(ListUtils.enumerateList(Machine.toutesLesMachines(connSGBD)));
-                }else if (rep==j++){
-                    typeop nouveau = typeop.demande(connSGBD);
-                    nouveau.sauvegarde(connSGBD);
-                    System.out.println("type d'opération N°"+ nouveau.getId()+"crée");
-                }else if (rep == j++){
-                    System.out.println(ListUtils.enumerateList(typeop.tousLesTypeop(connSGBD)));
-                }else if (rep==j++){
-                    produit nouveau = produit.demande(connSGBD);
-                    nouveau.sauvegarde(connSGBD);
-                    System.out.println("Produit N°"+ nouveau.getId()+"crée");
                 }
             }catch (SQLException ex){
                 System.out.println(ExceptionsUtils.messageEtPremiersAppelsDansPackage(ex,"fr.insa.rochette",10));
             }
         }
     }
+
     
     
             

@@ -16,7 +16,7 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
-//@Route("login") 
+@Route("login") 
 
 
 @PageTitle("Login | Gestion Production")

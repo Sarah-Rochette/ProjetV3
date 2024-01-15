@@ -4,6 +4,10 @@
  */
 package fr.insa.rochette.cours.m3.projets.likes.model;
 
+import static fr.insa.rochette.cours.m3.projets.likes.model.GestionBdD.creeSchema;
+import static fr.insa.rochette.cours.m3.projets.likes.model.GestionBdD.initialise;
+import static fr.insa.rochette.cours.m3.projets.likes.model.GestionBdD.razBdD;
+import static fr.insa.rochette.cours.m3.projets.likes.model.GestionBdD.supprimeSchema;
 import fr.insa.rochette.utils.ConsoleFdB;
 import fr.insa.rochette.utils.database.ConnectionSGBD;
 import fr.insa.rochette.utils.exceptions.ExceptionsUtils;
@@ -251,7 +255,7 @@ public class Utilisateur {
                 }else if (rep==j++){
                     System.out.println(ListUtils.enumerateList(Utilisateur.tousLesUtilisateurs(connSGBD)));
                 }else if (rep== j++){
-                    Optional<Utilisateur> choix= ListUtils.selectOneOrCancel("--- selectionnez un utiliasteur à supprimer",
+                    Optional<Utilisateur> choix= ListUtils.selectOneOrCancel("--- selectionnez un utilisateur à supprimer",
                             Utilisateur.tousLesUtilisateurs(connSGBD), Utilisateur::toString);
                     if (choix.isPresent()){
                         choix.get().delete(connSGBD);
@@ -264,16 +268,16 @@ public class Utilisateur {
                     Utilisateur nouveau = Utilisateur.demande(connSGBD);
                     nouveau.sauvegarde(connSGBD);
                     System.out.println("utilisateur N°"+ nouveau.getId()+"crée");
-                }else if (rep== j++){
-                    List<Machine> cur = this.autorisee(connSGBD);
-                    List<Machine> tous = Machine.toutesLesMachines(connSGBD);
-                    tous.removeAll(cur);
-                    Utilisateur user =ListUtils.selectOne("--- selectionnez un utilisateur",Utilisateur.tousLesUtilisateurs(connSGBD), Utilisateur::toString);
-                    List<Machine> autoriser = ListUtils.selectMultiple(
-                            "------ choisissez les machines autorisées", this.autorisee(connSGBD), 
-                            tous,
-                            Machine:: toString);
-                    this.saveAutorisee(connSGBD,user,autoriser);
+//                }else if (rep== j++){
+//                  //  List<Machine> cur = this.autorisee(connSGBD);
+//                    List<Machine> tous = Machine.toutesLesMachines(connSGBD);
+//                    tous.removeAll(cur);
+//                    Utilisateur user =ListUtils.selectOne("--- selectionnez un utilisateur",Utilisateur.tousLesUtilisateurs(connSGBD), Utilisateur::toString);
+//                    List<Machine> autoriser = ListUtils.selectMultiple(
+//                           // "------ choisissez les machines autorisées", this.autorisee(connSGBD), 
+//                            tous,
+//                            Machine:: toString);
+//                    this.saveAutorisee(connSGBD,user,autoriser);
                 }
                 
             }catch (SQLException ex){
@@ -285,34 +289,34 @@ public class Utilisateur {
  
 
     
-    public void saveAutorisee(ConnectionSGBD connSGBD,Utilisateur user, List<Machine> autorise) throws SQLException {
-        Connection conn=connSGBD.getCon();
-        conn.setAutoCommit(false);
-        try (Statement st= conn.createStatement()){
-            //...
-            try(PreparedStatement supp = conn.prepareStatement(
-            "delete from autorisee where idutilisateur = ?")){
-                supp.setInt(1, user.getId());// on supprime tous les anciennes machine
-                supp.executeUpdate();
-            }
-            try(PreparedStatement ajout = conn.prepareStatement(
-            "insert into autorisee (idutilisateur,machine) values (?,?)")){
-                for (Machine machine : autorise){
-                    ajout.setInt(1,user.getId());
-                    ajout.setInt(2, machine.id);
-                    ajout.executeUpdate();
-                }
-            }
-            conn.commit();
-        }
-        catch(SQLException ex){
-            conn.rollback();
-            throw ex;
-        }
-        finally{
-            conn.setAutoCommit(true);
-        }
-    } 
+//    public void saveAutorisee(ConnectionSGBD connSGBD,Utilisateur user, List<Machine> autorise) throws SQLException {
+//        Connection conn=connSGBD.getCon();
+//        conn.setAutoCommit(false);
+//        try (Statement st= conn.createStatement()){
+//            //...
+//            try(PreparedStatement supp = conn.prepareStatement(
+//            "delete from autorisee where idutilisateur = ?")){
+//                supp.setInt(1, user.getId());// on supprime tous les anciennes machine
+//                supp.executeUpdate();
+//            }
+////            try(PreparedStatement ajout = conn.prepareStatement(
+////            "insert into autorisee (idutilisateur,machine) values (?,?)")){
+////                for (Machine machine : autorise){
+////                    ajout.setInt(1,user.getId());
+////                    ajout.setInt(2, machine.id);
+////                    ajout.executeUpdate();
+////                }
+//            }
+//            conn.commit();
+//        }
+//        catch(SQLException ex){
+//            conn.rollback();
+//            throw ex;
+//        }
+//        finally{
+//            conn.setAutoCommit(true);
+//        }
+//    } 
 
     @Override
     public int hashCode() {

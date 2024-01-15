@@ -15,7 +15,7 @@ import com.vaadin.flow.router.Route;
  */
 
 
-@Route(value="mytodo")
+@Route(value="essai")
 public class MenuBarStyles extends Div {
     public MenuBarStyles() {
 //        Aligner les boutons à droite

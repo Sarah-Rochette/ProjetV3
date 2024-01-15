@@ -21,15 +21,17 @@ public class operation {
     private int id;
     private int idtype;
     private int idproduit;
+    private String produitbrut;
 
-    private operation(int id, int idtype, int idproduit) {
+    private operation(int id, int idtype, int idproduit,String produitbrut) {
         this.id = id;
         this.idtype = idtype;
         this.idproduit = idproduit;
+        this.produitbrut=produitbrut;
     }
     
-    public operation(int idtype, int idproduit) {
-        this(-1,idtype, idproduit);
+    public operation(int idtype, int idproduit, String produitbrut) {
+        this(-1,idtype, idproduit,produitbrut);
     }
   
     
@@ -39,6 +41,7 @@ public class operation {
                 PreparedStatement.RETURN_GENERATED_KEYS)){
             st.setInt(1,this. idtype);
             st.setInt(2, this.idproduit);
+            st.setString(3, this.produitbrut);
             st.executeUpdate();
             try (ResultSet ids= st.getGeneratedKeys()){
                 ids.next();
@@ -60,28 +63,28 @@ public class operation {
     public static operation demande(ConnectionSGBD connSGBD)throws SQLException{
         typeop choix1 =ListUtils.selectOne("--- selectionnez un type d'opération",typeop.tousLesTypeop(connSGBD), typeop::toString);
         produit choix2 =ListUtils.selectOne("--- selectionnez un produit",produit.tousLesProduits(connSGBD), produit::toString);
-        return new operation (choix1.getId(),choix2.getId());
+        ProduitBrut choix3 =ListUtils.selectOne("--- selectionnez un produit brut",ProduitBrut.tousLesProduitsBruts(connSGBD), ProduitBrut::toString);
+        return new operation (choix1.getId(),choix2.getId(),choix3.getString());
     }
     
     public static List<operation> toutesLesOperations(ConnectionSGBD connSGBD) throws SQLException{
         List<operation> alls = new ArrayList<>();
-        try (PreparedStatement st = connSGBD.getCon().prepareStatement(" select id,idtype,idproduit from operation")){
+        try (PreparedStatement st = connSGBD.getCon().prepareStatement(" select id,idtype,idproduit,produitbrut from operation")){
          ResultSet res = st.executeQuery();
          while(res.next()){
              int id = res.getInt("id");
              int idtype = res.getInt("idtype");
              int idproduit = res.getInt("idproduit");
-             alls.add(new operation(id,idtype, idproduit));
+             String produitbrut=res.getString("produitbrut");
+             alls.add(new operation(id,idtype, idproduit,produitbrut));
          }
      } 
      return alls;
     }
-
-    @Override
+ @Override
     public String toString() {
-        return "operation{" + "id=" + id + ", idtype=" + idtype + ", idproduit=" + idproduit + '}';
+        return "operation{" + "id=" + id + ", idtype=" + idtype + ", idproduit=" + idproduit + ", produitbrut=" + produitbrut + '}';
     }
-
     public int getId() {
         return id;
     }
@@ -105,5 +108,16 @@ public class operation {
     public void setIdproduit(int idproduit) {
         this.idproduit = idproduit;
     }
+
+    public String getProduitbrut() {
+        return produitbrut;
+    }
+
+    public void setProduitbrut(String produitbrut) {
+        this.produitbrut = produitbrut;
+    }
+
+   
+
    
 }
