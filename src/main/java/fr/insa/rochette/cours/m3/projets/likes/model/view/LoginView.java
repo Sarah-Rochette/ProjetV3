@@ -10,6 +10,7 @@ package fr.insa.rochette.cours.m3.projets.likes.model.view;
  */
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.login.LoginForm;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
@@ -31,12 +32,12 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
 		setSizeFull(); 
 
 
-		setAlignItems(Alignment.CENTER);
-		setJustifyContentMode(JustifyContentMode.CENTER);
+		setAlignItems(FlexComponent.Alignment.CENTER);
+		setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
 
-		login.setAction("login"); 
-
-
+		this.login.setAction("login");
+                this.login
+                
 
 		add(new H1("Gestion de Production"), login);
 	}
