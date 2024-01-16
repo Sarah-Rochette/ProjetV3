@@ -4,8 +4,8 @@
     <modelVersion>4.0.0</modelVersion>
     <!-- Project from https://start.vaadin.com/project/6cacf1d1-9569-46eb-b3e7-6357549f7bd2 -->
     <groupId>fr.insa.rochette.cours.m3.projets.likes.model.Application</groupId>
-    <artifactId>likes</artifactId>
-    <name>likes</name>
+    <artifactId>GestionProd</artifactId>
+    <name>GestionProd</name>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
