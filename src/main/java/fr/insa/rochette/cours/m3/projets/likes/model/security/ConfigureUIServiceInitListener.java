@@ -8,7 +8,6 @@ package fr.insa.rochette.cours.m3.projets.likes.model.security;
  *
  * @author sarah
  */
-
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.server.ServiceInitEvent;

@@ -216,7 +216,7 @@ public class Utilisateur {
             System.out.println((i++)+")supprimer un utilisateur");
             System.out.println((i++)+")créer des utilisateurs test");
             System.out.println((i++)+")créer un nouvel utilisateur");
-            System.out.println((i++)+")Définir des machines autorisées");
+            //System.out.println((i++)+")Définir des machines autorisées");
             System.out.println("0) Fin");
             rep= ConsoleFdB.entreeEntier("Votre choix :");
             try{
