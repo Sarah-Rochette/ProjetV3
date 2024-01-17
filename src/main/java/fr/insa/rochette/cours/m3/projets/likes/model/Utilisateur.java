@@ -101,7 +101,7 @@ public class Utilisateur {
     
     public static List<Utilisateur> tousLesUtilisateurs(ConnectionSGBD connSGBD) throws SQLException{
         List<Utilisateur> alls = new ArrayList<>();
-        try (PreparedStatement st = connSGBD.getCon().prepareStatement(" select id,login,password,description,idrole,machineautorisee from utilisateur")){
+        try (PreparedStatement st = connSGBD.getCon().prepareStatement(" select id,login,password,description,idrole from utilisateur")){
          ResultSet res = st.executeQuery();
          while(res.next()){
              int id = res.getInt("id");
@@ -115,23 +115,7 @@ public class Utilisateur {
      return alls;
     }
     
-    public List<Utilisateur> apprecie(ConnectionSGBD connSGBD) throws SQLException{
-        return cherche(connSGBD,"select id,login,password,description,idrole from utilisateur join apprecie on apprecie.u2=utilisateur.id where apprecie.u1 = ?" );
-    }
     
-    public List<Utilisateur> appreciePar(ConnectionSGBD connSGBD) throws SQLException{
-        return cherche(connSGBD,"select id,login,password,description,idrole from utilisateur join apprecie on apprecie.u1=utilisateur.id where apprecie.u2 = ?" );
-    }
-    /**
-     * {@code u1 ami u2 <==> u1 appreci u2 et u2 apprecie u1}
-     * @param connSGBD
-     * @return
-     * @throws SQLException 
-     */
-    
-    public List<Utilisateur> amis(ConnectionSGBD connSGBD) throws SQLException{
-        return cherche(connSGBD,"select id,login,password,description,idrole,machineautorisee from apprecie as a1 join apprecie as a2 on a1.u2=a2.u1 join utilisateur on utilisateur.id = a1.u2 where a1.u1= ? and a1.u1 = a2.u2" );
-    }
     
     private List<Utilisateur> cherche(ConnectionSGBD connSGBD, String requeteSQL) throws SQLException{
         List<Utilisateur> alls = new ArrayList<>();
@@ -216,7 +200,6 @@ public class Utilisateur {
             System.out.println((i++)+")supprimer un utilisateur");
             System.out.println((i++)+")créer des utilisateurs test");
             System.out.println((i++)+")créer un nouvel utilisateur");
-            //System.out.println((i++)+")Définir des machines autorisées");
             System.out.println("0) Fin");
             rep= ConsoleFdB.entreeEntier("Votre choix :");
             try{
@@ -268,16 +251,6 @@ public class Utilisateur {
                     Utilisateur nouveau = Utilisateur.demande(connSGBD);
                     nouveau.sauvegarde(connSGBD);
                     System.out.println("utilisateur N°"+ nouveau.getId()+"crée");
-//                }else if (rep== j++){
-//                  //  List<Machine> cur = this.autorisee(connSGBD);
-//                    List<Machine> tous = Machine.toutesLesMachines(connSGBD);
-//                    tous.removeAll(cur);
-//                    Utilisateur user =ListUtils.selectOne("--- selectionnez un utilisateur",Utilisateur.tousLesUtilisateurs(connSGBD), Utilisateur::toString);
-//                    List<Machine> autoriser = ListUtils.selectMultiple(
-//                           // "------ choisissez les machines autorisées", this.autorisee(connSGBD), 
-//                            tous,
-//                            Machine:: toString);
-//                    this.saveAutorisee(connSGBD,user,autoriser);
                 }
                 
             }catch (SQLException ex){
@@ -287,36 +260,6 @@ public class Utilisateur {
     }
 
  
-
-    
-//    public void saveAutorisee(ConnectionSGBD connSGBD,Utilisateur user, List<Machine> autorise) throws SQLException {
-//        Connection conn=connSGBD.getCon();
-//        conn.setAutoCommit(false);
-//        try (Statement st= conn.createStatement()){
-//            //...
-//            try(PreparedStatement supp = conn.prepareStatement(
-//            "delete from autorisee where idutilisateur = ?")){
-//                supp.setInt(1, user.getId());// on supprime tous les anciennes machine
-//                supp.executeUpdate();
-//            }
-////            try(PreparedStatement ajout = conn.prepareStatement(
-////            "insert into autorisee (idutilisateur,machine) values (?,?)")){
-////                for (Machine machine : autorise){
-////                    ajout.setInt(1,user.getId());
-////                    ajout.setInt(2, machine.id);
-////                    ajout.executeUpdate();
-////                }
-//            }
-//            conn.commit();
-//        }
-//        catch(SQLException ex){
-//            conn.rollback();
-//            throw ex;
-//        }
-//        finally{
-//            conn.setAutoCommit(true);
-//        }
-//    } 
 
     @Override
     public int hashCode() {

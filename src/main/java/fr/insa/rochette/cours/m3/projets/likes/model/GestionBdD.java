@@ -78,8 +78,8 @@ public class GestionBdD {
                    +")");
             st.executeUpdate("create table produit (\n"
                    +connSGBD.getSgbd().sqlForGeneratedIntPKColumn("id")+",\n"
-                   +"ref String,\n"
-                   +"descritpion String\n"
+                   +"ref text,\n"
+                   +"descritpion text\n"
                    +")");
             st.executeUpdate("alter table realise \n"
                    +" add constraint fk_realise_idtype \n"
@@ -92,8 +92,8 @@ public class GestionBdD {
              st.executeUpdate("create table operation (\n"
                    +connSGBD.getSgbd().sqlForGeneratedIntPKColumn("id")+",\n"
                    +"idtype integer,\n"
-                   +"idproduit integer\n"
-                   +"produitbrut text\n"
+                   +"idproduit integer,\n"
+                   +"idproduitbrut text\n"
                    +")");
             st.executeUpdate("alter table operation \n"
                    +" add constraint fk_operation_idtype \n"
@@ -101,25 +101,16 @@ public class GestionBdD {
             st.executeUpdate("alter table operation \n"
                    +" add constraint fk_operation_idproduit \n"
                    +"foreign key (idproduit) references produit(id)");
-            st.executeUpdate("alter table operation \n"
-                   +" add constraint fk_operation_produitbrut \n"
-                   +"foreign key (produitbrut) references produitbrut(description)");
-            st.executeUpdate("create table produitbrut (\n"
+              st.executeUpdate("create table produitbrut (\n"
                    +connSGBD.getSgbd().sqlForGeneratedIntPKColumn("id")+",\n"
-                   +"descri^tion text,\n"
+                   +"description text,\n"
                    +"nombre integer\n"
-                   +")");
-            st.executeUpdate("create table autorisee (\n"
-                   +connSGBD.getSgbd().sqlForGeneratedIntPKColumn("id")+",\n"
-                   +"idutilisateur integer,\n"
-                   +"idmachine integer\n"
-                   +")");
-            st.executeUpdate("alter table autorisee \n"
-                   +" add constraint fk_autorisee_idutilisateur \n"
-                   +"foreign key (idutilisateur) references utilisateur(id)");
-            st.executeUpdate("alter table autorisee \n"
-                   +" add constraint fk_autorisee_idmachine \n"
-                   +"foreign key (idmachine) references machine(id)");
+                   +")");            
+               st.executeUpdate("alter table operation \n"
+                   +" add constraint fk_operation_produitbrut \n"
+                   +"foreign key (idproduitbrut) references produitbrut(id)");
+
+
            conn.commit();
         }
         catch(SQLException ex){
@@ -150,32 +141,23 @@ public class GestionBdD {
     public static void supprimeSchema(ConnectionSGBD connSGBD) throws SQLException{
         Connection conn=connSGBD.getCon();
         try (Statement st= conn.createStatement()){
-            try{
-            st.executeUpdate("alter table autorisee drop constraint fk_autorisee_idmachine");   
-           }
-           catch(SQLException ex){
-           }
-            try{
-            st.executeUpdate("alter table autorisee drop constraint fk_autorisee_idutilisateur");   
-           }
-           catch(SQLException ex){
-           }
-           try{
-            st.executeUpdate("drop table operation ");
-           }
-           catch(SQLException ex){
-           }
-            try{
-            st.executeUpdate("drop table produit brut ");
-           }
-           catch(SQLException ex){
-           }
+           
            try{
             st.executeUpdate("alter table operation drop constraint fk_operation_produitbrut");   
            }
            catch(SQLException ex){
            }
             try{
+            st.executeUpdate("drop table produit brut ");
+           }            
+           catch(SQLException ex){
+           }
+            try{
+            st.executeUpdate("alter table operation drop constraint fk_operation_idproduit");   
+           }
+           catch(SQLException ex){
+           }
+           try{
             st.executeUpdate("alter table operation drop constraint fk_operation_idproduit");   
            }
            catch(SQLException ex){
@@ -231,7 +213,7 @@ public class GestionBdD {
            catch(SQLException ex){
            }     
                
-        } 
+       } 
     }
     
     public static void menuPrincipal(ConnectionSGBD connSGBD){

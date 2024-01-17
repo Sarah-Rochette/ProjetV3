@@ -109,10 +109,7 @@ public class Machine {
     }
      
     
-    public List<Machine> autorisee(ConnectionSGBD connSGBD) throws SQLException{
-        return cherche(connSGBD,"select id,nom,description,puissance,couthoraire,operation from machine join autorisee on autorisee.idmachine=machine.id where autorisee.idutilisateur = ?" );
-    }
- 
+    
 
     @Override
     public String toString() {

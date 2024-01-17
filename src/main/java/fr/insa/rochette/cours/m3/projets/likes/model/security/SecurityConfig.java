@@ -8,7 +8,6 @@ package fr.insa.rochette.cours.m3.projets.likes.model.security;
  *
  * @author sarah
  */
-
 import com.vaadin.flow.spring.security.VaadinWebSecurity;
 import fr.insa.rochette.cours.m3.projets.likes.model.view.LoginView;
 import org.springframework.context.annotation.Bean;

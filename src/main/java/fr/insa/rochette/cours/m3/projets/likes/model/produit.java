@@ -34,7 +34,7 @@ public class produit {
     
     public void sauvegarde(ConnectionSGBD connSGBD)throws SQLException{
         try (PreparedStatement st= connSGBD.getCon().prepareStatement(
-                 "insert into machine (ref,description) values (?,?)",
+                 "insert into produit (ref,descritpion) values (?,?)",
                 PreparedStatement.RETURN_GENERATED_KEYS)){
             st.setString(1,this. ref);
             st.setString(2, this.description);
@@ -62,12 +62,12 @@ public class produit {
     
     public static List<produit> tousLesProduits(ConnectionSGBD connSGBD) throws SQLException{
         List<produit> alls = new ArrayList<>();
-        try (PreparedStatement st = connSGBD.getCon().prepareStatement(" select ref,description")){
+        try (PreparedStatement st = connSGBD.getCon().prepareStatement(" select id, ref,descritpion from produit")){
          ResultSet res = st.executeQuery();
          while(res.next()){
              int id = res.getInt("id");
              String ref=res.getString("ref");
-             String description= res.getString("description");
+             String description= res.getString("descritpion");
              alls.add(new produit(id,ref,description));
          }
      } 
@@ -76,7 +76,7 @@ public class produit {
 
     @Override
     public String toString() {
-        return "produit{" + "id=" + id + ", ref=" + ref + ", description=" + description + '}';
+        return "produit{" + "id=" + id + ", ref=" + ref + ", descritpion=" + description + '}';
     }
 
     public int getId() {

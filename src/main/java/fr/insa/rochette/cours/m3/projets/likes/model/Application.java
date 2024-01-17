@@ -3,7 +3,7 @@ package fr.insa.rochette.cours.m3.projets.likes.model;
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.Theme;
-import fr.insa.rochette.cours.m3.projets.likes.model.view.MainLayout;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

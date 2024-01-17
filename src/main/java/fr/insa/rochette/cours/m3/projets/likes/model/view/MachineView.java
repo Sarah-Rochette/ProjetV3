@@ -20,7 +20,7 @@ import java.util.List;
 
 
 
-@Route(value = "machine", layout = MainLayout.class)
+@Route(value = "machine")
 @PageTitle("Liste des machines | Gestion Production")
 /**
  *
@@ -43,5 +43,4 @@ public class MachineView extends Div{
         add(grid);
     }
 }
-
 

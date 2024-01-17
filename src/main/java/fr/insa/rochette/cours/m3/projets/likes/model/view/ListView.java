@@ -16,6 +16,18 @@ import java.util.List;
  *
  * @author sarah
  */
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.router.PageTitle;
+import com.vaadin.flow.router.Route;
+import fr.insa.rochette.cours.m3.projets.likes.model.produit;
+import jakarta.annotation.security.PermitAll;
+import java.util.List;
+
+/**
+ *
+ * @author sarah
+ */
 @PermitAll
 @Route(value="produit", layout = MainLayout.class)
 @PageTitle("Produits | Gestion Production")
