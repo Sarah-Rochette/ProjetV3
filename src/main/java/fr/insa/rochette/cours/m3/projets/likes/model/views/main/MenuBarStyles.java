@@ -3,6 +3,7 @@
  * Each line should be prefixed with  * 
  */
 package fr.insa.rochette.cours.m3.projets.likes.model.views.main;
+
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.contextmenu.SubMenu;
 import com.vaadin.flow.component.html.Div;
