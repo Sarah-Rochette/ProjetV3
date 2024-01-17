@@ -6,12 +6,11 @@ package fr.insa.rochette.cours.m3.projets.likes.model;
 
 import fr.insa.rochette.utils.ConsoleFdB;
 import fr.insa.rochette.utils.database.ConnectionSGBD;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -168,6 +167,15 @@ public class Machine {
         this.operation = operation;
     }
     
-    
+    public static class MachineService {
+
+        public static List<Machine> getMachines() {
+            return Arrays.asList(
+                new Machine(1, "Fraiseuse", "Wagner", 3, 47, "Fraisage"),
+                new Machine(2, "Tourneuse", "Wagner", 3, 47, "Tournage")
+
+        );
+        }
+    }
 }
 

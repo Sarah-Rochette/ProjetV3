@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -102,4 +103,15 @@ public class produit {
         this.description = description;
     }
     
+        public static class produitService {
+
+        public static List<produit> getProduits() {
+            return Arrays.asList(
+                new produit(1, "Arbre", "Cylindre"),
+                new produit(2, "Cube", "Parallélépipède rectangle"),
+                new produit(3, "Boulon", "Visserie"),
+                new produit(4, "Piston", "Element moteur")
+        );
+        }
+    }
 }
